@@ -6,12 +6,19 @@ from urllib.parse import quote
 
 
 class ODSL:
-    cid = "d3742f5f-3d4d-4565-a80a-ebdefaab8d08"
-    url = 'http://localhost:7071/api/'
+    url = 'https://odsl.azurewebsites.net/api/'
     token = None
     cache = cache.TokenCacheAspect()
-    app = PublicClientApplication(cid, authority="https://login.microsoft.com/common", token_cache=cache.getCache())
+    app = PublicClientApplication(client_id='d3742f5f-3d4d-4565-a80a-ebdefaab8d08', authority="https://login.microsoft.com/common", token_cache=cache.getCache())
     
+    def setStage(self, stage):
+        if stage == 'dev':
+            self.url = 'https://odsl-dev.azurewebsites.net/api/'
+        if stage == 'local':
+            self.url = 'http://localhost:7071/api/'
+        if stage == 'prod':
+            self.url = 'https://odsl.azurewebsites.net/api/'       
+        
     def get(self, service, source, id):
         if self.token == None:
             print("Not logged in: call login() first")
