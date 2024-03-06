@@ -15,3 +15,6 @@ class TokenCacheAspect:
         
     def getCache(self):
         return self.cache
+    
+    def logout(self):
+        os.remove(self.filename)
