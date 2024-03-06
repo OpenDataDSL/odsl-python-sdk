@@ -55,10 +55,11 @@ class ODSL:
 
     def login(self):
         accounts = self.app.get_accounts()
+        s = ["api://opendatadsl/api_user"]
         if accounts:
-            self.token = self.app.acquire_token_silent(["email", "profile", "openid", "offline_access", "api://opendatadsl/api_user"], account=accounts[0])
+            self.token = self.app.acquire_token_silent(scopes=s, account=accounts[0])
         else:
-            self.token = self.app.acquire_token_interactive(["email", "profile", "openid", "offline_access", "api://opendatadsl/api_user"])
+            self.token = self.app.acquire_token_interactive(scopes=s)
         if "access_token" in self.token:
             return
         print("Token acquisition failed: " + self.token["error_description"])
