@@ -56,12 +56,15 @@ class ODSL:
     def login(self):
         accounts = self.app.get_accounts()
         if accounts:
-            self.token = self.app.acquire_token_silent(["api://opendatadsl/.default"], account=accounts[0])
+            self.token = self.app.acquire_token_silent(["email", "profile", "openid", "offline_access", "api://opendatadsl/api_user"], account=accounts[0])
         else:
-            self.token = self.app.acquire_token_interactive(["api://opendatadsl/.default"])
+            self.token = self.app.acquire_token_interactive(["email", "profile", "openid", "offline_access", "api://opendatadsl/api_user"])
         if "access_token" in self.token:
             return
         print("Token acquisition failed: " + self.token["error_description"])
 
+    def logout(self):
+        self.token = None
+        self.cache.logout()
 
 
