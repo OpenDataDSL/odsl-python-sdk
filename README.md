@@ -30,7 +30,7 @@ odsl.login()
 ### Finding master data
 
 ```python
-objects = odsl.list('object', source='public', filter='source=ECB')
+objects = odsl.list('object', source='public', params={'source':'ECB'})
 print(objects[0])
 ```
 
@@ -43,7 +43,7 @@ print(obj['description'])
 
 ### Getting a timeseries
 ```python
-ts = odsl.get('data', 'public', '#ABN_FX.EURUSD:SPOT')
+ts = odsl.get('data', 'public', '#ABN_FX.EURUSD:SPOT', {'_range':'from(2024-07-01)'})
 print(ts)
 ```
 
