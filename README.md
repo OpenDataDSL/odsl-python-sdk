@@ -47,6 +47,14 @@ ts = odsl.get('data', 'public', '#ABN_FX.EURUSD:SPOT', {'_range':'from(2024-07-0
 print(ts)
 ```
 
+### Getting a forward curve
+```python
+id = '#AEMO.EL.AU.NEM.NSW1.FORECAST:DEMAND:2024-07-15'
+curve = odsl.get('data', 'public', id)
+for c in curve['contracts']:
+	print(c['tenor'] + " - " + str(c['value']))
+```
+
 ### Updating some private master data
 ```python
 var = {
