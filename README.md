@@ -27,6 +27,14 @@ odsl = sdk.ODSL()
 odsl.login()
 ```
 
+### Logging in using a secret
+```python
+from odsl import sdk
+
+odsl = sdk.ODSL()
+odsl.loginWithSecret(tenantId, clientId, secret)
+```
+
 ### Finding master data
 
 ```python
