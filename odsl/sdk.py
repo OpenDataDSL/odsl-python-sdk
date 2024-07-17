@@ -1,8 +1,8 @@
 import requests
-from msal import PublicClientApplication
+from msal import PublicClientApplication, ConfidentialClientApplication
 import json
 from odsl import cache
-from urllib.parse import quote, urlencode
+from urllib.parse import quote
 
 
 class ODSL:
@@ -56,6 +56,15 @@ class ODSL:
             self.token = self.app.acquire_token_silent(scopes=s, account=accounts[0])
         else:
             self.token = self.app.acquire_token_interactive(scopes=s)
+        if "access_token" in self.token:
+            return
+        print("Token acquisition failed: " + self.token["error_description"])
+        
+    def loginWithSecret(self, tenant, clientId, secret):
+        authority = "https://login.microsoft.com/" + tenant
+        s = ["api://opendatadsl/.default"]
+        ccapp = ConfidentialClientApplication(client_id=clientId, client_credential=secret, authority=authority)
+        self.token = ccapp.acquire_token_for_client(scopes=s)
         if "access_token" in self.token:
             return
         print("Token acquisition failed: " + self.token["error_description"])
