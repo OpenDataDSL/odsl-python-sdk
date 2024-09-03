@@ -4,7 +4,7 @@ import atexit
 
 class TokenCacheAspect:
     filedir = os.path.expanduser('~') + "/AppData/Roaming/ODSL/"
-    filename = filedir + ".odsl"
+    filename = filedir + "token.odsl"
     data = None
     cache = msal.SerializableTokenCache()
     
