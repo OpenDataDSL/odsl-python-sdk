@@ -9,7 +9,8 @@ class TokenCacheAspect:
     cache = msal.SerializableTokenCache()
     
     def __init__(self):
-        self.cache.deserialize(open(self.filename, "r").read())
+        if os.path.exists(self.filename):
+            self.cache.deserialize(open(self.filename, "r").read())
         atexit.register(lambda:
             open(self.filename, "w").write(self.cache.serialize()))
         
