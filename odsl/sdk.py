@@ -30,6 +30,28 @@ class ODSL:
             return r.json()
         return r.text
     
+    def function(self, service, name, id=None, params=None):
+        if self.token == None:
+            print("Not logged in: call login() first")
+            return
+        headers = {'Authorization':'Bearer ' + self.token["access_token"]}
+        if params == None:
+            params = {'_function':name}
+        else:
+            params['_function'] = name
+        url = self.url + service + "/v1"
+        if id != None:
+            source = 'private'
+            if id.startswith('#'):
+                source = 'public'
+            eid = quote(id)
+            url = url + "/" + source + "/" + eid
+            print(url)
+        r = requests.get(url, headers=headers, params=params)
+        if r.status_code == 200:
+            return r.json()
+        return r.text
+    
     def list(self, service, source='private', params=None):
         if self.token == None:
             print("Not logged in: call login() first")
