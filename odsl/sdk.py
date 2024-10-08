@@ -17,7 +17,7 @@ class ODSL:
         if stage == 'local':
             self.url = 'http://localhost:7071/api/'
         if stage == 'prod':
-            self.url = 'https://odsl.azurewebsites.net/api/'       
+            self.url = 'https://api.opendatadsl.com/api/'
         
     def get(self, service, source, id, params=None):
         if self.token == None:
