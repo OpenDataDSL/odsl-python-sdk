@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 
 class ODSL:
-    url = 'https://odsl.azurewebsites.net/api/'
+    url = 'https://api.opendatadsl.com/api/'
     token = None
     cache = cache.TokenCacheAspect()
     app = PublicClientApplication(client_id='d3742f5f-3d4d-4565-a80a-ebdefaab8d08', authority="https://login.microsoft.com/common", token_cache=cache.getCache())
