@@ -35,6 +35,14 @@ odsl = sdk.ODSL()
 odsl.loginWithSecret(tenantId, clientId, secret)
 ```
 
+### Logging in using an API Key
+```python
+from odsl import sdk
+
+odsl = sdk.ODSL()
+odsl.loginWithAPIKey(userid, apikey)
+```
+
 ### Finding master data
 
 ```python

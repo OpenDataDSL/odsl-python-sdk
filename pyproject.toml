@@ -17,4 +17,4 @@ keywords = ["OpenDataDSL", "ODSL"]
 requires-python = ">=3.9"
 
 [project.urls]
-Homepage = "https://opendatadsl.com"
+Homepage = "https://www.opendatadsl.com"
