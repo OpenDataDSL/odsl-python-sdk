@@ -11,6 +11,8 @@ class TokenCacheAspect:
     def __init__(self):
         if os.path.exists(self.filename):
             self.cache.deserialize(open(self.filename, "r").read())
+        else:
+            self.filename = "./token.odsl"
         atexit.register(lambda:
             open(self.filename, "w").write(self.cache.serialize()))
         

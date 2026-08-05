@@ -25,7 +25,12 @@ class ODSL:
             return
         headers = self.credentials
         eid = quote(id)
-        r = requests.get(self.url + service + "/v1/" + source + "/" + eid, headers=headers, params=params)
+        u = self.url + service
+        if source == None:
+            u = self.url + service + "/v1/" + eid
+        else:
+            u = self.url + service + "/v1/" + source + "/" + eid
+        r = requests.get(u, headers=headers, params=params)
         if r.status_code == 200:
             return r.json()
         return r.text
@@ -110,6 +115,10 @@ class ODSL:
     def loginWithAPIKey(self, userid, apikey):
         b = base64.b64encode(bytes(userid+':'+apikey, 'utf-8'))
         self.credentials = {'Authorization':'Basic ' + str(b, 'utf-8')}
+
+    def loginWithToken(self, token):
+        self.credentials = {'Authorization':'Bearer ' + token}
+        self.token = token
 
     def logout(self):
         self.token = None
