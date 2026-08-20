@@ -22,14 +22,16 @@ This Python SDK for OpenDataDSL has the following features:
 * Update any data (if you have permission) using the `update` method
 * Build well-formed payloads for objects, curves, time series and events with the `odsl.types` helpers, instead of hand-writing the JSON shapes yourself
 
-Full, runnable walkthroughs for everything below live in [`examples/`](examples/):
+Full, runnable walkthroughs for everything below live in [`examples/`](https://github.com/OpenDataDSL/odsl-python-sdk/tree/master/examples):
 
 | Script | What it shows |
 | --- | --- |
-| [`examples/object-example.py`](examples/object-example.py) | Create a private object, then update it |
-| [`examples/curve-example.py`](examples/curve-example.py) | Attach a forward curve to an object, built with `odsl.types.Curve` |
-| [`examples/full-example.py`](examples/full-example.py) | One walkthrough covering an object, a curve, a time series, and events, all built with `odsl.types` |
-| [`examples/manual-payload-example.py`](examples/manual-payload-example.py) | The same object/curve update as above, with the JSON payloads written out by hand instead of using `odsl.types` |
+| [`object-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/object-example.py) | Create a private object, then update it |
+| [`curve-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/curve-example.py) | Attach a forward curve to an object, built with `odsl.types.Curve` |
+| [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/full-example.py) | One walkthrough covering an object, a curve, a time series, and events, all built with `odsl.types` |
+| [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/manual-payload-example.py) | The same object/curve update as above, with the JSON payloads written out by hand instead of using `odsl.types` |
+
+(Links above point to GitHub rather than relative paths, since PyPI renders this README on its own domain, where relative repo links don't resolve.)
 
 Each one expects a `.env` file alongside it with credentials for a service principal that has permission to write private data:
 
@@ -175,7 +177,7 @@ odsl.update('object', 'private', obj)
 
 Every setter returns the builder itself, so a curve, time series, or object can be built as one chained expression, as shown above.
 
-`odsl.types.Object`/`Curve`/`TimeSeries`/`Event` mirror the server's `VarSimpleObject`/`VarCurve`/`VarTimeSeries`/`VarEvent` shapes; see each class's docstring in [`odsl/types.py`](odsl/types.py) for the full list of setters and which wire key each one writes.
+`odsl.types.Object`/`Curve`/`TimeSeries`/`Event` mirror the server's `VarSimpleObject`/`VarCurve`/`VarTimeSeries`/`VarEvent` shapes; see each class's docstring in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the full list of setters and which wire key each one writes.
 
 ### Writing events
 
@@ -193,8 +195,8 @@ odsl.update('event', 'private', types.events_dataframe(events))
 readings = odsl.get('event', 'private', event_key)
 ```
 
-See [`examples/full-example.py`](examples/full-example.py) for this in the context of a full object/curve/time-series/event walkthrough, and the `Event`/`events_dataframe` docstrings in [`odsl/types.py`](odsl/types.py) for the details of the required fields.
+See [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/full-example.py) for this in the context of a full object/curve/time-series/event walkthrough, and the `Event`/`events_dataframe` docstrings in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the details of the required fields.
 
 ### Skipping `odsl.types` and building payloads by hand
 
-If you'd rather not depend on `odsl.types` -- or just want to see exactly what's going over the wire -- every example above has a plain-dict equivalent; see [`examples/manual-payload-example.py`](examples/manual-payload-example.py) for the object + curve update written out as raw dicts.
+If you'd rather not depend on `odsl.types` -- or just want to see exactly what's going over the wire -- every example above has a plain-dict equivalent; see [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/manual-payload-example.py) for the object + curve update written out as raw dicts.
