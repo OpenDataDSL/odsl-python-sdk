@@ -39,6 +39,36 @@ class ODSL:
     cache = cache.TokenCacheAspect()
     app = PublicClientApplication(client_id='d3742f5f-3d4d-4565-a80a-ebdefaab8d08', authority="https://login.microsoft.com/common", token_cache=cache.getCache())
 
+    def _checkError(self, r):
+        """Print the server's error detail if a response wasn't successful.
+
+        The ODSL API returns an ``x-odsl-error`` response header with a
+        human-readable explanation whenever a request fails, which is
+        easy to miss since the failure response body (``r.text``) alone
+        often isn't very informative (e.g. a plain "Bad Request"). Every
+        request-making method below runs its response through this before
+        returning, so a failure prints something like::
+
+            ODSL error 400: The event property must be in the format OBJECTID:EVENTID
+
+        to help explain *why* a call failed, without changing what that
+        method returns -- it's still up to the caller to check the
+        response the way each method already documents.
+
+        Args:
+            r: The ``requests`` ``Response`` to check.
+
+        Returns:
+            ``r``, unchanged, so this can wrap a request call inline.
+        """
+        if not str(r.status_code).startswith('2'):
+            error = r.headers.get('x-odsl-error')
+            if error:
+                print("ODSL error " + str(r.status_code) + ": " + error)
+            else:
+                print("ODSL error " + str(r.status_code) + " (no x-odsl-error header in the response)")
+        return r
+
     def setStage(self, stage):
         """Point this client at a different ODSL environment.
 
@@ -71,8 +101,10 @@ class ODSL:
 
         Returns:
             The decoded JSON response (dict/list) on success (HTTP 200),
-            the raw response text (str) if the request did not succeed, or
-            ``None`` if this client has not been logged in.
+            the raw response text (str) if the request did not succeed
+            (also printing the server's ``x-odsl-error`` detail, if any --
+            see `_checkError`), or ``None`` if this client has not been
+            logged in.
         """
         if self.credentials == None:
             print("Not logged in: call login() first")
@@ -84,7 +116,7 @@ class ODSL:
             u = self.url + service + "/v1/" + eid
         else:
             u = self.url + service + "/v1/" + source + "/" + eid
-        r = requests.get(u, headers=headers, params=params)
+        r = self._checkError(requests.get(u, headers=headers, params=params))
         if r.status_code == 200:
             return r.json()
         return r.text
@@ -107,8 +139,10 @@ class ODSL:
 
         Returns:
             The decoded JSON response (dict/list) on success (HTTP 200),
-            the raw response text (str) if the request did not succeed, or
-            ``None`` if this client has not been logged in.
+            the raw response text (str) if the request did not succeed
+            (also printing the server's ``x-odsl-error`` detail, if any --
+            see `_checkError`), or ``None`` if this client has not been
+            logged in.
         """
         if self.credentials == None:
             print("Not logged in: call login() first")
@@ -126,7 +160,7 @@ class ODSL:
             eid = quote(id)
             url = url + "/" + source + "/" + eid
             print(url)
-        r = requests.get(url, headers=headers, params=params)
+        r = self._checkError(requests.get(url, headers=headers, params=params))
         if r.status_code == 200:
             return r.json()
         return r.text
@@ -147,15 +181,16 @@ class ODSL:
         Returns:
             The decoded JSON response (typically a list of records) on
             success (HTTP 200), the raw response text (str) if the request
-            did not succeed, or ``None`` if this client has not been
-            logged in.
+            did not succeed (also printing the server's ``x-odsl-error``
+            detail, if any -- see `_checkError`), or ``None`` if this
+            client has not been logged in.
         """
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
         headers = self.credentials.copy()
         headers['Accept-Encoding'] = 'gzip'
-        r = requests.get(self.url + service + "/v1/" + source, headers=headers, params=params)
+        r = self._checkError(requests.get(self.url + service + "/v1/" + source, headers=headers, params=params))
         if r.status_code == 200:
             return r.json()
         return r.text
@@ -179,8 +214,9 @@ class ODSL:
         Returns:
             The response headers (a ``requests`` headers mapping) on
             success (HTTP 200), the raw response text (str) if the request
-            did not succeed, or ``None`` if this client has not been
-            logged in.
+            did not succeed (also printing the server's ``x-odsl-error``
+            detail, if any -- see `_checkError`), or ``None`` if this
+            client has not been logged in.
         """
         if self.credentials == None:
             print("Not logged in: call login() first")
@@ -189,7 +225,7 @@ class ODSL:
         if params == None:
             params = {}
         params["_limit"] = 1
-        r = requests.get(self.url + service + "/v1/" + source, headers=headers, params=params)
+        r = self._checkError(requests.get(self.url + service + "/v1/" + source, headers=headers, params=params))
         if r.status_code == 200:
             return r.headers
         return r.text
@@ -210,14 +246,18 @@ class ODSL:
             ``None``. The HTTP status code of the response is printed for
             diagnostic purposes; this method does not return the response
             body. Prints "Not logged in: call login() first" instead of
-            making a request if this client has not been logged in.
+            making a request if this client has not been logged in. On a
+            non-2xx response, also prints the server's ``x-odsl-error``
+            detail (see `_checkError`) -- e.g. a malformed body often
+            fails with a 400 whose ``r.text``/status code alone don't say
+            why, but the error header usually does.
         """
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
         headers = self.credentials
         body = json.JSONEncoder().encode(o=var)
-        r = requests.post(self.url + service, headers=headers, data=body, params=params)
+        r = self._checkError(requests.post(self.url + service, headers=headers, data=body, params=params))
         print(r.status_code)
 
     def login(self):
