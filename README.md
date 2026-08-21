@@ -22,26 +22,16 @@ This Python SDK for OpenDataDSL has the following features:
 * Update any data (if you have permission) using the `update` method
 * Build well-formed payloads for objects, curves, time series, computed/derived data, events, and report definitions with the `odsl.types` helpers, instead of hand-writing the JSON shapes yourself
 
-Full, runnable walkthroughs for everything below live in [`examples/`](https://github.com/OpenDataDSL/odsl-python-sdk/tree/master/examples):
+Full, runnable walkthroughs for everything below live in the [odsl-python-sdk-demo](https://github.com/OpenDataDSL/odsl-python-sdk-demo) repository, along with setup instructions (including the `.env` file each one expects):
 
 | Script | What it shows |
 | --- | --- |
-| [`object-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/object-example.py) | Create a private object, then update it |
-| [`curve-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/curve-example.py) | Attach a forward curve to an object, built with `odsl.types.Curve` |
-| [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/full-example.py) | One walkthrough covering an object, a curve, a time series, and events, all built with `odsl.types` |
-| [`smart-types-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/smart-types-example.py) | Computed/derived fields -- `EventCurve`, `SmartCurve`, `EventTimeSeries`, `SmartTimeSeries` |
-| [`report-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/report-example.py) | Define a scheduled report with `odsl.types.Report` |
-| [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/manual-payload-example.py) | The same object/curve update as above, with the JSON payloads written out by hand instead of using `odsl.types` |
-
-(Links above point to GitHub rather than relative paths, since PyPI renders this README on its own domain, where relative repo links don't resolve.)
-
-Each one expects a `.env` file alongside it with credentials for a service principal that has permission to write private data:
-
-    tid=<azure-ad-tenant-id>
-    appid=<application-client-id>
-    secret=<client-secret>
-
-Also check out our [demo repository](https://github.com/OpenDataDSL/odsl-python-sdk-demo) for further real-world usage.
+| [`object-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/object-example.py) | Create a private object, then update it |
+| [`curve-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/curve-example.py) | Attach a forward curve to an object, built with `odsl.types.Curve` |
+| [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/full-example.py) | One walkthrough covering an object, a curve, a time series, and events, all built with `odsl.types` |
+| [`smart-types-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/smart-types-example.py) | Computed/derived fields -- `EventCurve`, `SmartCurve`, `EventTimeSeries`, `SmartTimeSeries` |
+| [`report-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/report-example.py) | Define a scheduled report with `odsl.types.Report` |
+| [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/manual-payload-example.py) | The same object/curve update as above, with the JSON payloads written out by hand instead of using `odsl.types` |
 
 ## Usage
 
@@ -197,7 +187,7 @@ odsl.update('event', 'private', types.events_dataframe(events))
 readings = odsl.get('event', 'private', event_key)
 ```
 
-See [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/full-example.py) for this in the context of a full object/curve/time-series/event walkthrough, and the `Event`/`events_dataframe` docstrings in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the details of the required fields.
+See [`full-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/full-example.py) for this in the context of a full object/curve/time-series/event walkthrough, and the `Event`/`events_dataframe` docstrings in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the details of the required fields.
 
 ### Computed curves and time series
 
@@ -225,7 +215,7 @@ obj['SMART_CURVE'] = smart_curve.data
 odsl.update('object', 'private', obj)
 ```
 
-See [`smart-types-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/smart-types-example.py) for the full walkthrough, including `EventTimeSeries`/`SmartTimeSeries`, and each class's docstring in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the rest of their setters.
+See [`smart-types-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/smart-types-example.py) for the full walkthrough, including `EventTimeSeries`/`SmartTimeSeries`, and each class's docstring in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for the rest of their setters.
 
 ### Defining a report
 
@@ -241,10 +231,10 @@ report = (
 odsl.update('reportconfig', 'private', report.data)
 ```
 
-This creates the report's *definition* -- what produces it, and on what schedule -- not a generated result; see [`report-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/report-example.py) and `Report`'s docstring in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for more.
+This creates the report's *definition* -- what produces it, and on what schedule -- not a generated result; see [`report-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/report-example.py) and `Report`'s docstring in [`odsl/types.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/odsl/types.py) for more.
 
 `set_cron`'s format is worth calling out explicitly, since getting it wrong fails in a confusing way: it's *not* standard 5-field unix cron -- the server requires a 6th field for the year (`*` for "every year", as above), and rejects a 5-field expression like `'0 6 * * MON'`. That rejection happens server-side *before* the report is written, and `update` doesn't raise on error, so a bad cron expression means the report silently never gets created -- the first sign of trouble is usually an unrelated-looking `404 ... Not Found` from a later `get`, not an error about the cron itself. `Report.set_cron` raises a `ValueError` up front if the expression doesn't have 6 or 7 fields, specifically to catch this before it gets that far.
 
 ### Skipping `odsl.types` and building payloads by hand
 
-If you'd rather not depend on `odsl.types` -- or just want to see exactly what's going over the wire -- every example above has a plain-dict equivalent; see [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk/blob/master/examples/manual-payload-example.py) for the object + curve update written out as raw dicts.
+If you'd rather not depend on `odsl.types` -- or just want to see exactly what's going over the wire -- every example above has a plain-dict equivalent; see [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/manual-payload-example.py) for the object + curve update written out as raw dicts.
