@@ -5,7 +5,7 @@ requires = ["setuptools"]
 
 [project]
 name = "odsl"
-version = "1.1.3"
+version = "1.2.0"
 description = "Python SDK for OpenDataDSL"
 readme = "README.md"
 license = { file = "LICENSE" }
