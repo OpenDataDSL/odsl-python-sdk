@@ -10,7 +10,7 @@ class TASK:
 		self.task = task
 		self.started = False
 		self.inphase = False
-		self.sb_client = ServiceBusClient.from_connection_string(os.environ["ODSL_SB_URL"], logging_enable=True)
+		self.sb_client = ServiceBusClient.from_connection_string(os.environ["ODSL_SB_CPM"], logging_enable=True)
 		self.queue_name = os.environ['ODSL_STAGE'] + "/process-execution"
 
 	async def startProcess(self):
