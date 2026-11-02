@@ -238,3 +238,26 @@ This creates the report's *definition* -- what produces it, and on what schedule
 ### Skipping `odsl.types` and building payloads by hand
 
 If you'd rather not depend on `odsl.types` -- or just want to see exactly what's going over the wire -- every example above has a plain-dict equivalent; see [`manual-payload-example.py`](https://github.com/OpenDataDSL/odsl-python-sdk-demo/blob/main/manual-payload-example.py) for the object + curve update written out as raw dicts.
+
+### Running as a process: linking your work to the run
+
+When your script runs as an OpenDataDSL process, pass the client to `process.TASK`:
+
+```python
+from odsl import process, sdk
+
+odsl = sdk.ODSL()
+odsl.loginWithSecret(tenant_id, client_id, secret)
+t = odsl.get('process-task', None, task_id)
+p = odsl.get('process', None, t['name'])
+run = process.TASK(p, t, odsl)
+```
+
+The client then sends the run's trace (the process execution id, or the trace of whatever started the run) as the `x-odsl-trace` header on every request. The platform stores it on what your requests cause: dataset deliveries, curve builds, exports and automations. So when a load goes wrong and your script raises an alert, late data, failed curves and failed exports further down the line can be linked back to that alert. The client also tells the platform which run it is (the process name, the execution id and, when the task input has an `ondate`, that date). An alert raised from the script is then a root alert: the alert that explains what went wrong in the run. Without a `subject` its subject is the process and the date, and without a `key` its key is `process/<name>/<ondate>/load`, so a retry that fails again adds to the same alert. Send `'root': False` for an alert that is not about the run failing, and `'affects'` with the dataset ids the run was meant to load:
+
+```python
+odsl.update('alert', 'private', {'title': 'ICE Endex settlement file not available', 'severity': 'high',
+    'affects': ['ICE.NDEX.NLB', 'ICE.NDEX.TTF']})
+```
+
+To set the trace yourself, call `odsl.setTrace(trace, process, execution, ondate)` (all but the trace are optional); `odsl.setTrace(None)` stops sending it.

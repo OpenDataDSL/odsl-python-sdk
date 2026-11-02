@@ -3,7 +3,7 @@
 __title__ = "odsl"
 __description__ = "ODSL Python SDK."
 __url__ = "https://doc.opendatadsl.com"
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 __build__ = 0x023100
 __author__ = "Colin Hartley"
 __author_email__ = "colin.hartley@opendatadsl.com"

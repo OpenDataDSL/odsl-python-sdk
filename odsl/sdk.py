@@ -36,6 +36,8 @@ class ODSL:
     url = 'https://api.opendatadsl.com/api/'
     token = None
     credentials = None
+    trace = None
+    run = None
     cache = cache.TokenCacheAspect()
     app = PublicClientApplication(client_id='d3742f5f-3d4d-4565-a80a-ebdefaab8d08', authority="https://login.microsoft.com/common", token_cache=cache.getCache())
 
@@ -68,6 +70,46 @@ class ODSL:
             else:
                 print("ODSL error " + str(r.status_code) + " (no x-odsl-error header in the response)")
         return r
+
+    def _headers(self):
+        """The headers for a request: the credentials plus the provenance trace.
+
+        Returns a copy of ``self.credentials`` with an ``x-odsl-trace``
+        header added when a trace is set (see `setTrace`).
+        """
+        headers = dict(self.credentials)
+        if self.trace:
+            headers['x-odsl-trace'] = self.trace
+            if self.run:
+                for name, value in self.run.items():
+                    if value:
+                        headers['x-odsl-' + name] = str(value)
+        return headers
+
+    def setTrace(self, trace, process=None, execution=None, ondate=None):
+        """Link everything this client does to a process run, for provenance.
+
+        The trace is sent as the ``x-odsl-trace`` header on every request.
+        The platform stores it on what the request causes (dataset
+        deliveries, curve builds, exports, automations), so problems
+        further down the line can be linked back to the alert raised by
+        the process that loaded the data.
+
+        You rarely need to call this yourself: ``process.TASK(p, t, odsl)``
+        sets it from the process task.
+
+        Args:
+            trace: The trace id, normally the process execution id, or
+                ``None`` to stop sending it.
+            process: Optional name of the process this script runs as.
+            execution: Optional execution id of this run.
+            ondate: Optional date (yyyy-mm-dd) the run is loading data for.
+                With ``process``, an alert this client raises becomes a
+                root alert about this run: its subject is the process and
+                this date (today when not given).
+        """
+        self.trace = trace
+        self.run = {'process': process, 'execution': execution, 'ondate': ondate} if process else None
 
     def setStage(self, stage):
         """Point this client at a different ODSL environment.
@@ -109,7 +151,7 @@ class ODSL:
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
-        headers = self.credentials
+        headers = self._headers()
         eid = quote(id)
         u = self.url + service
         if source == None:
@@ -147,7 +189,7 @@ class ODSL:
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
-        headers = self.credentials
+        headers = self._headers()
         if params == None:
             params = {'_function':name}
         else:
@@ -188,7 +230,7 @@ class ODSL:
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
-        headers = self.credentials.copy()
+        headers = self._headers()
         headers['Accept-Encoding'] = 'gzip'
         r = self._checkError(requests.get(self.url + service + "/v1/" + source, headers=headers, params=params))
         if r.status_code == 200:
@@ -221,7 +263,7 @@ class ODSL:
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
-        headers = self.credentials
+        headers = self._headers()
         if params == None:
             params = {}
         params["_limit"] = 1
@@ -255,7 +297,7 @@ class ODSL:
         if self.credentials == None:
             print("Not logged in: call login() first")
             return
-        headers = self.credentials
+        headers = self._headers()
         body = json.JSONEncoder().encode(o=var)
         r = self._checkError(requests.post(self.url + service, headers=headers, data=body, params=params))
         print(r.status_code)
